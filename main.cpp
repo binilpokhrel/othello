@@ -16,6 +16,7 @@ const int P1_KEY = 1;
 const int P2_KEY = -P1_KEY;
 const int AI_KEY = P2_KEY;
 const int HEIGHT = 4; //keep this even, so that the leaf node is AI's turn
+                      //restricted to 4 bc of hardware limitations of Omega2
 
 struct Grid
 {
@@ -38,9 +39,6 @@ vector<int> checkAll(Grid& board);
 int convertOneDimension(int x, int y);
 bool skipTurn(Grid& board);
 void convertCell(int x, int y, Grid& board);
-//int findChainLength(int cellX, int cellY, Grid& board);
-//void determineDirection(int cellX, int cellY, bool direction[GRID_SIZE], Grid& board);
-//void chooseLongestChain(int moves[], int size);
 int getNumCells(Grid& board);
 int getNumCorners(Grid& board);
 int getNumAroundCorners(Grid& board);
@@ -63,10 +61,9 @@ void alternatePlayers(Grid& board);
 
 
 /*
- ADD OMEGA SPECFIFC FUNCTIONS
+ OMEGA SPECFIFC FUNCTIONS NOT INCLUDED
  */
 
-//OMEGA SHIT NEEDED
 void initialiseGrid(Grid& board)
 {
     //2 tiles each, for p1 and p2
@@ -83,16 +80,12 @@ void initialiseGrid(Grid& board)
         }
     }
     
-    //createBoard();
-    
     //setting up board with appropriate player tiles arranged in centre
     board.cell[GRID_SIZE/2][GRID_SIZE/2] = P1_KEY;
     board.cell[GRID_SIZE/2 - 1][GRID_SIZE/2 - 1] = P1_KEY;
     board.cell[GRID_SIZE/2 - 1][GRID_SIZE/2] = P2_KEY;
     board.cell[GRID_SIZE/2][GRID_SIZE/2 - 1] = P2_KEY;
     
-    //temp draw func
-    //drawGrid(board, checkAll(board));
 }
 
 //temp draw func
@@ -133,7 +126,7 @@ void drawGrid(Grid& board, vector<int> moves)
     cout << endl << endl;
 }
 
-//temp draw func
+//temp input func
 void getMove(Grid& board)
 {
     string name;
@@ -147,12 +140,8 @@ void getMove(Grid& board)
         
         cin >> name;
         
-        //stringstream strVal(name.substr(0,1));
-        //strVal >> x;
         x = name[0] - 'a';
         
-        //stringstream strVal2(name.substr(1,1));
-        //strVal2 >> y;
         y = name[1] - '1';
         
         convertCell(x,y,board);
@@ -237,23 +226,16 @@ bool checkDirections(int cellX, int cellY, int direction, Grid& board)
 {
     int cellsMoved = 0;
     
-    //while((cellX >= 0) && (cellX <= 7) && (cellY >= 0) && (cellY <= 7))
-    //cout << "original: " << cellX << ", " << cellY << endl;
-    //cout << "direction: " << direction << endl;
-    
-    
     while(true)
     {
         cellX += incX(direction);
         cellY += incY(direction);
         
-        //cout << cellX << ", "  << cellY << endl;
         
         if(cellX < 0 || cellX > 7 || cellY < 0 || cellY > 7)
         {
             return false;
         }
-        
         
         cellsMoved++;
         
@@ -266,7 +248,6 @@ bool checkDirections(int cellX, int cellY, int direction, Grid& board)
         
     }
     
-    //cout << "\n\n\n";
 }
 
 bool check(int cellX, int cellY, bool toUpdate[GRID_SIZE][GRID_SIZE], Grid& board)
@@ -275,8 +256,6 @@ bool check(int cellX, int cellY, bool toUpdate[GRID_SIZE][GRID_SIZE], Grid& boar
     int originalY = cellY;
     bool worked = false;
     
-    //worked = false;
-    //bool toUpdate[GRID_SIZE][GRID_SIZE];
     
     for(int y = 0; y < GRID_SIZE; y++)
     {
@@ -308,8 +287,6 @@ bool check(int cellX, int cellY, bool toUpdate[GRID_SIZE][GRID_SIZE], Grid& boar
             worked = true;
         }
     }
-    
-    //cout << "\n\n\n";
     
     return worked;
 }
@@ -351,7 +328,6 @@ int getNumCells(Grid& board)
     return board.p2Amount;
 }
 
-//OMEGA SHIT NEEDED
 vector<int> checkAll(Grid& board)
 {
     vector<int> validMove;
@@ -378,11 +354,9 @@ vector<int> checkAll(Grid& board)
 
 int convertOneDimension(int x, int y)
 {
-    //return GRID_SIZE * y + x + 1;
     return GRID_SIZE * y + x;
 }
 
-//OMEGA SHIT NEEDED
 bool skipTurn(Grid& board)
 {
     if(checkAll(board).size() == 0)
@@ -391,9 +365,6 @@ bool skipTurn(Grid& board)
         
         board.playValue *= -1;
         
-        //temp draw func
-        //drawGrid(board, moves);
-        
         return true;
     }
     
@@ -401,8 +372,6 @@ bool skipTurn(Grid& board)
 }
 
 
-
-//OMEGA SHIT NEEDED
 //implements change
 void convertCell(int x, int y, Grid& board)
 {
@@ -417,9 +386,6 @@ void convertCell(int x, int y, Grid& board)
         board.playValue = -board.playValue;
         
         skipTurn(board);
-        
-        //temp draw func
-        //drawGrid(board, checkAll(board));
     }
 }
 
@@ -430,25 +396,11 @@ void makeMove(int move, Grid& board)
 
 int convertToCoordinateX(int coordinate)
 {
-//    if(coordinate % GRID_SIZE == 0)
-//    {
-//        return 7;
-//    }
-//
-//    return coordinate % GRID_SIZE - 1;
     return coordinate % GRID_SIZE;
-    
 }
 
 int convertToCoordinateY(int coordinate)
 {
-//    if(coordinate % GRID_SIZE == 0)
-//    {
-//        return coordinate / 8 -1;
-//    }
-
-//    return coordinate / GRID_SIZE;
-    
     return coordinate/GRID_SIZE;
 }
 
@@ -468,49 +420,6 @@ void copyBoard(Grid& board1, Grid& board2)
     }
 }
 
-
-//COMPUTER PLAYER METHODS
-/*
- int findChainLength(int cellX, int cellY, Grid& board)
- {
- int cellsMoved = 0;
- bool direction[GRID_SIZE];
- //    int initialX = cellX;
- //    int initialY = cellY;
- 
- determineDirection(cellX, cellY, direction, board);
- 
- for(int i = 0; i < GRID_SIZE; i++)
- {
- if(direction[i])
- {
- while ((cellX >= 0) && (cellX <= GRID_SIZE-1) && (cellY >= 0) && (cellY <= GRID_SIZE - 1) &&
- (board.cell[cellX][cellY] != board.playValue))
- {
- cellX += incX(i);
- cellY += incY(i);
- 
- cellsMoved++;
- }
- }
- }
- 
- return cellsMoved;
- }
- 
- void determineDirection(int cellX, int cellY, bool direction[GRID_SIZE], Grid &board)
- {
- for(int i = 0; i < GRID_SIZE; i++)
- {
- direction[i] = false;
- if(checkDirections(cellX, cellY, i, board))
- {
- direction[i] = true;
- }
- }
- }
- */
-
 int getNumCorners(Grid& board)
 {
     int numCorners = 0;
@@ -524,6 +433,7 @@ int getNumCorners(Grid& board)
     return numCorners;
 }
 
+//maybe?
 //int getNumAroundCorners(Grid& board)
 //{
 //    int numAroundCorners = 0;
@@ -628,7 +538,7 @@ float minimax(Grid &board, int depth, bool isMaximizer, float alpha, float beta)
 float evaluate(Grid &board)
 {
     const float CORNER_WEIGHT = 100;
-    //    const float AROUND_CORNER_WEIGHT = 2;
+    //    maybe? const float AROUND_CORNER_WEIGHT = 2;
     const float MOBILITY_WEIGHT = 1;
     const float DISC_COUNT_WEIGHT = 1/100;
     
@@ -644,14 +554,14 @@ float evaluate(Grid &board)
     score += CORNER_WEIGHT * getNumCorners(board);
     score += DISC_COUNT_WEIGHT * getNumCells(board);
     
-    //    score -= AROUND_CORNER_WEIGHT * getNumAroundCorners(board);
+    //    maybe? score -= AROUND_CORNER_WEIGHT * getNumAroundCorners(board);
     
     board.playValue = P1_KEY;
     
     oppScore += CORNER_WEIGHT * getNumCorners(board);
     oppScore += DISC_COUNT_WEIGHT * getNumCells(board);
     
-    //    oppScore -= AROUND_CORNER_WEIGHT * getNumAroundCorners(board);
+    //    maybe? oppScore -= AROUND_CORNER_WEIGHT * getNumAroundCorners(board);
     
     if (!isEndgame){
         if(playerKey == AI_KEY){ //if it's ai's turn to play, add its mobility to AI board score
@@ -703,13 +613,3 @@ float minOf(float a, float b)
     
     return a;
 }
-
-//void outPutScore()
-//{
-//}
-
-//void outputToLCD()
-//{
-//    outPutScore();
-//}
-
